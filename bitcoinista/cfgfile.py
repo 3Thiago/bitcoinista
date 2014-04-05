@@ -16,7 +16,30 @@ def hash_password(pw):
 
 def privkey_from_mainseed_pw(mainseed, pw):
     return bc.sha256(mainseed + pw)
-    
+
+def privkey_from_user_input(input):
+    method = ''
+    privkey = ''
+    if input == '':
+        method = 'random'
+        privkey = bc.random_key()
+    else:
+        format = ''
+        try:
+            format = bc.get_privkey_format(input)
+        except:
+            format = ''
+        
+        if format == 'wif':
+            method = 'wif'
+            privkey = encode_privkey(input, 'hex')
+        else:
+            method = 'brain'
+            privkey = bc.sha256(input)
+
+    return privkey, method
+
+
 def create_config_file(filename, mainseed, pw):
     pwhash = hash_password(pw)
     prv = privkey_from_mainseed_pw(mainseed, pw)

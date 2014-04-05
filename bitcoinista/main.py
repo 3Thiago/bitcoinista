@@ -26,12 +26,14 @@ def main():
         mainseed, pwhash, cfg_addr = cfgfile.read_from_config_file(cfg_file_name)
     else:
         print 'Config file not found. Let us create a new one.'
-        mainseed = raw_input('Enter main seed (use 10 word diceware password) or press enter to create random seed: ')
-        if mainseed == '':
-            mainseed = bc.random_key()
-        pw = getpass.getpass('Enter device password: ')
+        input = raw_input('Enter private key in WIF format, brainwallet passphrase (use at least 128 bits of entropy!) or press enter to create new random private key: ')
+        if input == '':
+            privkey = bc.random_key()
+        
+
+        pw = getpass.getpass('Enter AES encryption password: ')
         pwhash = cfgfile.hash_password(pw)
-        pw2 = getpass.getpass('Enter device password again: ')
+        pw2 = getpass.getpass('Enter password again: ')
         pw2hash = cfgfile.hash_password(pw2)
         if pwhash != pw2hash:
             raise Exception('Password does not match.')
