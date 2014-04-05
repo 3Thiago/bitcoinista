@@ -16,42 +16,66 @@ def main():
     except ImportError:
         pass
     
-    cfg_file_name = 'bitcoinista_config.json'
-    mainseed = ''
-    pwhash = ''
-    cfg_addr = ''
+    wal_file_name = 'bitcoinista_config.json'
+    wal_addr = ''
     
     # Read from config file if exists, create it otherwise
-    if os.path.exists(cfg_file_name):
-        mainseed, pwhash, cfg_addr = wallet.read_from_config_file(cfg_file_name)
+    if os.path.exists(wal_file_name):
+        encr_privkey, wal_addr = wallet.read_from_wallet_file(wal_file_name)
     else:
         print 'Config file not found. Let us create a new one.'
         input = raw_input('Enter private key in WIF format, brainwallet passphrase (use at least 128 bits of entropy!) or press enter to create new random private key: ')
-        if input == '':
-            privkey = bc.random_key()
-        
+
+        privkey, method = wallet.privkey_from_user_input(input)
+        wal_addr = bc.privtoaddr(privkey)
 
         pw = getpass.getpass('Enter AES encryption password: ')
-        pwhash = wallet.hash_password(pw)
         pw2 = getpass.getpass('Enter password again: ')
-        pw2hash = wallet.hash_password(pw2)
-        if pwhash != pw2hash:
-            raise Exception('Password does not match.')
+        if pw != pw2:
+            raise Exception('Passwords does not match.')
 
-        wallet.create_config_file(cfg_file_name, mainseed, pw)
-        mainseed, pwhash, cfg_addr = wallet.read_from_config_file(cfg_file_name)
-        print 'Config file created.'
-        print 'Your new address is: {0}'.format(cfg_addr)
+        encr_privkey = wallet.encrypt_privkey(privkey, pw)
+        wallet.create_wallet_file(wal_file_name, encr_privkey, wal_addr)
+        
+        # Read back from wallet to ensure consistency
+        encr_privkey2, wall_addr2 = wallet.read_from_wallet_file(wal_file_name)
+        privkey2 = wallet.decrypt_privkey(encr_privkey2, pw)
+        
+        if encr_privkey2 != encr_privkey or wall_addr2 != wall_addr:
+            raise Exception('Inconsistency in reading from/writing to wallet!')
+
+        if privkey2 != privkey:
+            raise Exception('Inconsistency in encrypting/decrypting private key!')
+
+        wif_privkey = bc.encode_privkey(privkey2, 'wif')
+
+        if method == 'wif':
+            print 'Private key imported. Your input was'
+            print input
+            print 'and the saved private key is'
+            print wif_privkey
+            print 'Make sure they are the same!'
+        elif method == 'brain':
+            print 'Brain wallet created from string'
+            print input
+            print 'with saved private key'
+            print wif_privkey
+        elif method == 'random':
+            print 'Random private key created. Saved private key is'
+            print wif_privkey
+
+        print ' '
+        print 'Your address is: {0}'.format(wal_addr)
         return
 
-    print 'Wallet address: ' + cfg_addr
+    print 'Wallet address: ' + wal_addr
 
     all_unspent = []
     try:
-        all_unspent = bc.unspent(cfg_addr)
+        all_unspent = bc.unspent(wal_addr)
     except:
         try:
-            all_unspent = bc.blockr_unspent(cfg_addr)
+            all_unspent = bc.blockr_unspent(wal_addr)
         except:
             raise Exception('Could not get address history.')
             
@@ -101,22 +125,11 @@ def main():
         print 'Transaction aborted.'
         return
 
-    hashedpw = wallet.hash_password(pw)
-
-    while (hashedpw != pwhash):
-        print 'Wrong password, try again.'
-        if pw == '\n':
-            print 'Transaction aborted.'
-            return
-        pw = getpass.getpass()
-        hashedpw = wallet.hash_password(pw)
-
-    prv = wallet.privkey_from_mainseed_pw(mainseed, pw)
-    pw = ''
+    prv = decrypt_private_key(encr_privkey, pw)
     addr = bc.privtoaddr(prv)
 
     # Check wallet address consistency
-    if addr != cfg_addr:
+    if addr != wal_addr:
         raise Exception('Address from config file does not match address from private key!')
         
     txfee = 10000

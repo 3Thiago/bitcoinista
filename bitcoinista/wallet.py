@@ -1,21 +1,33 @@
-import json
 import pybitcointools as bc
+import aes
+import json
 
-def read_from_config_file(filename):
-    cfg_file = open(filename, 'r')
-    cfg_json = cfg_file.read()
-    cfg_file.close()
-    cfg_dict = json.loads(cfg_json)
-    mainseed = cfg_dict['mainseed']
-    pwhash = cfg_dict['pwhash']
-    cfg_addr = cfg_dict['address']
-    return mainseed, pwhash, cfg_addr
+def read_from_wallet_file(filename):
+    wal_file = open(filename, 'r')
+    wal_json = wal_file.read()
+    wal_file.close()
+    wal_dict = json.loads(wal_json)
+    encr_privkey = wal_dict['encr_privkey']
+    wal_addr = wal_dict['address']
+    return encr_privkey, wal_addr
 
-def hash_password(pw):
-    return bc.sha256(pw)
+def bin_hash_password(pw):
+    return bc.bin_dbl_sha256(pw)
 
-def privkey_from_mainseed_pw(mainseed, pw):
-    return bc.sha256(mainseed + pw)
+def encrypt_privkey(privkey, pw):
+    bin_pwhash = bin_hash_password(pw)
+    bin_encr_privkey = aes.encryptData(bin_pwhash, privkey)
+    encr_privkey = bin_encr_privkey.encode('hex')
+    
+    return encr_privkey
+
+def decrypt_privkey(encr_privkey, pw):
+
+    bin_pwhash = bin_hash_password(pw)
+    bin_encr_privkey = encr_privkey.decode('hex')
+    privkey = aes.decryptData(bin_pwhash, bin_encr_privkey)
+
+    return privkey
 
 def privkey_from_user_input(input):
     method = ''
@@ -32,25 +44,18 @@ def privkey_from_user_input(input):
         
         if format == 'wif':
             method = 'wif'
-            privkey = encode_privkey(input, 'hex')
+            privkey = bc.encode_privkey(input, 'hex')
         else:
             method = 'brain'
             privkey = bc.sha256(input)
 
     return privkey, method
 
-
-def create_config_file(filename, mainseed, pw):
-    pwhash = hash_password(pw)
-    prv = privkey_from_mainseed_pw(mainseed, pw)
-    addr = bc.privtoaddr(prv)
-    cfg_dict = {}
-    cfg_dict['mainseed'] = mainseed
-    cfg_dict['pwhash'] = pwhash
-    cfg_dict['address'] = addr
-    cfg_json = json.dumps(cfg_dict)
-    cfg_file = open(filename, 'w')
-    cfg_file.write(cfg_json)
-    cfg_file.close()
-
-
+def create_wallet_file(filename, encr_privkey, addr):
+    wal_dict = {}
+    wal_dict['encr_privkey'] = encr_privkey
+    wal_dict['address'] = addr
+    wal_json = json.dumps(wal_dict)
+    wal_file = open(filename, 'w')
+    wal_file.write(wal_json)
+    wal_file.close()
