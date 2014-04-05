@@ -1,4 +1,4 @@
-# Install pybitcointools
+# Install bitcoinista, pybitcointools and slowaes
 
 import urllib
 import zipfile
