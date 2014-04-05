@@ -2,7 +2,15 @@ import pybitcointools as bc
 import wallet, core
 import getpass, sys, os
 
-def main():
+def get_demo_unspent():
+    unspent = [{'output': '2818b4de824faa41539c4501cc68912e2da07a050b407024c56f8e622cc208c4:1', 'value': 10000000},
+               {'output': '58df9f2348323f46706d84e83b31d685e88100e21feab3a6bd91859670199c0a:1', 'value': 50000000},
+               {'output': '09604cfd3e2bfdef31e1404c93249023955634cd8686f02adaa7694ca6cafdea:3', 'value': 20000000}
+               ]
+
+    return unspent
+
+def main(demo_mode=False):
 
     clipboard_available = True
     try:
@@ -71,14 +79,17 @@ def main():
     print 'Wallet address: ' + wal_addr
 
     all_unspent = []
-    try:
-        all_unspent = bc.unspent(wal_addr)
-    except:
+    if demo_mode:
+        all_unspent = get_demo_unspent()
+    else:
         try:
-            all_unspent = bc.blockr_unspent(wal_addr)
+            all_unspent = bc.unspent(wal_addr)
         except:
-            raise Exception('Could not get address history.')
-            
+            try:
+                all_unspent = bc.blockr_unspent(wal_addr)
+            except:
+                raise Exception('Could not get address history.')
+
     balance = core.get_balance(all_unspent)
     if balance == 0:
         print 'Address has zero balance. Send some coins and try again.'
@@ -154,16 +165,28 @@ def main():
     print 'Creating and signing transaction...'
     tx = bc.mktx(tx_ins, tx_outs)
 
-    print tx_ins
-    print tx_outs
-    
     for i in range(len(tx_ins)):
         tx = bc.sign(tx,i,prv)
-    #print bc.deserialize(tx)
 
-    print ' '
-    print 'Sending transaction...'
-    #bc.pushtx(tx)
-    print 'Transaction sent.'
+    if demo_mode:
+        print 'Total unspent outputs before transaction: ' + str(all_unspent)
+        print ' '
+        print 'Transaction inputs: ' + str(tx_ins)
+        print ' '
+        print 'Transaction outputs: ' + str(tx_outs)
+        print ' '
+        print 'Deserialized final transaction: ' + str(tx.deserialize())
+        print ' '
+    else:
+        print ' '
+        print 'Sending transaction...'
+
+        try:
+            bc.pushtx(tx)
+        except:
+            bc.eligius_pushtx(tx)
+
+        print 'Transaction sent.'
     print ' '
 
+    return

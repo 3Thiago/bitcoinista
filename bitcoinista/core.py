@@ -6,7 +6,7 @@ def get_balance(unspent):
     for u in unspent:
         balance += u['value']
     
-    return balance    
+    return balance
 
 def satoshi_to_btc(val):
     return (float(val) / 10**8)
