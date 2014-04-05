@@ -136,7 +136,7 @@ def main(demo_mode=False):
         print 'Transaction aborted.'
         return
 
-    prv = decrypt_private_key(encr_privkey, pw)
+    prv = wallet.decrypt_privkey(encr_privkey, pw)
     addr = bc.privtoaddr(prv)
 
     # Check wallet address consistency
@@ -175,7 +175,7 @@ def main(demo_mode=False):
         print ' '
         print 'Transaction outputs: ' + str(tx_outs)
         print ' '
-        print 'Deserialized final transaction: ' + str(tx.deserialize())
+        print 'Deserialized final transaction: ' + str(bc.deserialize(tx))
         print ' '
     else:
         print ' '
