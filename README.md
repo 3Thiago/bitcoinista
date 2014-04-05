@@ -37,8 +37,7 @@ can create it by:
 
 * Importing your own private key in WIF format
 
-* Letting Bitcoinista create a random key using
-  ```pybitcointools.random_key()```.
+* Letting Bitcoinista create a random key using ```pybitcointools.random_key()```.
 
 * Supplying a brainwallet passphrase if you like using diceware or
   similar system to control your own randomness. We strongly advice
