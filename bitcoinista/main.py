@@ -1,5 +1,5 @@
 import pybitcointools as bc
-import cfgfile, core
+import wallet, core
 import getpass, sys, os
 
 def main():
@@ -23,7 +23,7 @@ def main():
     
     # Read from config file if exists, create it otherwise
     if os.path.exists(cfg_file_name):
-        mainseed, pwhash, cfg_addr = cfgfile.read_from_config_file(cfg_file_name)
+        mainseed, pwhash, cfg_addr = wallet.read_from_config_file(cfg_file_name)
     else:
         print 'Config file not found. Let us create a new one.'
         input = raw_input('Enter private key in WIF format, brainwallet passphrase (use at least 128 bits of entropy!) or press enter to create new random private key: ')
@@ -32,14 +32,14 @@ def main():
         
 
         pw = getpass.getpass('Enter AES encryption password: ')
-        pwhash = cfgfile.hash_password(pw)
+        pwhash = wallet.hash_password(pw)
         pw2 = getpass.getpass('Enter password again: ')
-        pw2hash = cfgfile.hash_password(pw2)
+        pw2hash = wallet.hash_password(pw2)
         if pwhash != pw2hash:
             raise Exception('Password does not match.')
 
-        cfgfile.create_config_file(cfg_file_name, mainseed, pw)
-        mainseed, pwhash, cfg_addr = cfgfile.read_from_config_file(cfg_file_name)
+        wallet.create_config_file(cfg_file_name, mainseed, pw)
+        mainseed, pwhash, cfg_addr = wallet.read_from_config_file(cfg_file_name)
         print 'Config file created.'
         print 'Your new address is: {0}'.format(cfg_addr)
         return
@@ -101,7 +101,7 @@ def main():
         print 'Transaction aborted.'
         return
 
-    hashedpw = cfgfile.hash_password(pw)
+    hashedpw = wallet.hash_password(pw)
 
     while (hashedpw != pwhash):
         print 'Wrong password, try again.'
@@ -109,9 +109,9 @@ def main():
             print 'Transaction aborted.'
             return
         pw = getpass.getpass()
-        hashedpw = cfgfile.hash_password(pw)
+        hashedpw = wallet.hash_password(pw)
 
-    prv = cfgfile.privkey_from_mainseed_pw(mainseed, pw)
+    prv = wallet.privkey_from_mainseed_pw(mainseed, pw)
     pw = ''
     addr = bc.privtoaddr(prv)
 
