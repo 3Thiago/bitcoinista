@@ -16,7 +16,7 @@ def main():
     except ImportError:
         pass
     
-    wal_file_name = 'bitcoinista_config.json'
+    wal_file_name = 'bitcoinista_wallet.json'
     wal_addr = ''
     
     # Read from config file if exists, create it otherwise
@@ -38,10 +38,10 @@ def main():
         wallet.create_wallet_file(wal_file_name, encr_privkey, wal_addr)
         
         # Read back from wallet to ensure consistency
-        encr_privkey2, wall_addr2 = wallet.read_from_wallet_file(wal_file_name)
+        encr_privkey2, wal_addr2 = wallet.read_from_wallet_file(wal_file_name)
         privkey2 = wallet.decrypt_privkey(encr_privkey2, pw)
         
-        if encr_privkey2 != encr_privkey or wall_addr2 != wall_addr:
+        if encr_privkey2 != encr_privkey or wal_addr2 != wal_addr:
             raise Exception('Inconsistency in reading from/writing to wallet!')
 
         if privkey2 != privkey:

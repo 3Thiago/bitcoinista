@@ -2,6 +2,15 @@ import pybitcointools as bc
 import aes
 import json
 
+def create_wallet_file(filename, encr_privkey, addr):
+    wal_dict = {}
+    wal_dict['encr_privkey'] = encr_privkey
+    wal_dict['address'] = addr
+    wal_json = json.dumps(wal_dict)
+    wal_file = open(filename, 'w')
+    wal_file.write(wal_json)
+    wal_file.close()
+
 def read_from_wallet_file(filename):
     wal_file = open(filename, 'r')
     wal_json = wal_file.read()
@@ -50,12 +59,3 @@ def privkey_from_user_input(input):
             privkey = bc.sha256(input)
 
     return privkey, method
-
-def create_wallet_file(filename, encr_privkey, addr):
-    wal_dict = {}
-    wal_dict['encr_privkey'] = encr_privkey
-    wal_dict['address'] = addr
-    wal_json = json.dumps(wal_dict)
-    wal_file = open(filename, 'w')
-    wal_file.write(wal_json)
-    wal_file.close()
