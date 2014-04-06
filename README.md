@@ -70,20 +70,21 @@ enter the address to send to and the amount you wish to send.
 
 * Runs on iOS, no jailbreak needed.
 
-* Unjailbroken iOS security features: App environment is sandboxed,
-  all executables signed by Apple, hardware encryption.
+* Open source: You see exactly what it is you're running.
 
 * Quickly spend using a scanned QR code.
 
 * Private key encrypted with AES in case your phone is lost or
   stolen. Remember to back up your key!
 
-* Ability to import your own private key
+* Ability to import your own private key to spend from paper wallet
+  etc.
 
 ##Limitations##
 
-* Needs paid software: Pythonista is $6.99 in the App Store. Note that
-  this author is not affiliated with Pythonista in any way.
+* Needs paid software to run on iOS: Pythonista is $6.99 in the App
+  Store. Note that this author is not affiliated with Pythonista in
+  any way.
 
 * Single address in wallet: No change addresses or BIP32 support.
 

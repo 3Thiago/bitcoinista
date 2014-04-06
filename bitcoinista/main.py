@@ -27,7 +27,7 @@ def main(demo_mode=False):
     wal_file_name = 'bitcoinista_wallet.json'
     wal_addr = ''
     
-    # Read from config file if exists, create it otherwise
+    # Read from wallet file if exists, create it otherwise
     if os.path.exists(wal_file_name):
         encr_privkey, wal_addr = wallet.read_from_wallet_file(wal_file_name)
     else:
@@ -97,7 +97,7 @@ def main(demo_mode=False):
 
     btc_balance = core.satoshi_to_btc(balance)
 
-    print 'Wallet balance: {0} bitcoins ({1} satoshis)'.format(btc_balance,balance)
+    print 'Wallet balance: {0} bitcoins'.format(btc_balance)
     print ' '
 
     destination_addr = None
@@ -124,20 +124,34 @@ def main(demo_mode=False):
 
     amount_to_send = core.btc_to_satoshi(btc_amount)
 
+    if(balance < amount_to_send):
+        raise Exception("Insufficient funds to send {0} bitcoins.".format(btc_amount))
+
     print 'Do you want to send'
-    print '{0} bitcoins ({1} satoshis)'.format(btc_amount,amount_to_send)
-    print 'to address'
+    print '{0} bitcoins to address'.format(btc_amount)
     print destination_addr + '?'
     print 'To accept, enter your password. To abort, press enter.'
     print ' '
 
     pw = getpass.getpass()
-    if pw == '\n':
+    if pw == '\n' or pw == '':
         print 'Transaction aborted.'
         return
 
-    prv = wallet.decrypt_privkey(encr_privkey, pw)
-    addr = bc.privtoaddr(prv)
+    wrong_pw = True
+    prv = ''
+    addr = ''
+    while(wrong_pw):
+        try:
+            prv = wallet.decrypt_privkey(encr_privkey, pw)
+            addr = bc.privtoaddr(prv)
+            wrong_pw = False
+        except:
+            print 'Wrong password. Try again (enter to abort).'
+            pw = getpass.getpass()
+            if pw == '\n' or pw == '':
+                print 'Transaction aborted.'
+                return
 
     # Check wallet address consistency
     if addr != wal_addr:
@@ -158,7 +172,7 @@ def main(demo_mode=False):
                 return
 
     if(balance < amount_to_send + txfee):
-        raise Exception("Insufficient funds to send {0} + {1} bitcoins.".format(btc_amount, btc_fee))
+        raise Exception("Insufficient funds to send {0} + {1} bitcoins.".format(btc_amount, btc_txfee))
         
     tx_ins, tx_outs = core.simple_tx_inputs_outputs(addr, all_unspent, destination_addr, amount_to_send, txfee)
 
