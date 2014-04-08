@@ -24,14 +24,27 @@ def main(demo_mode=False):
     except ImportError:
         pass
     
+    txfee = 10000
     wal_file_name = 'bitcoinista_wallet.json'
     wal_addr = ''
     
+    if demo_mode:
+       print '*****************************'
+       print '** BITCOINISTA (DEMO MODE) **'
+       print '*****************************'
+       print ''
+
+    else:
+        print '*****************'
+        print '** BITCOINISTA **'
+        print '*****************'
+        print ''
+
     # Read from wallet file if exists, create it otherwise
     if os.path.exists(wal_file_name):
         encr_privkey, wal_addr = wallet.read_from_wallet_file(wal_file_name)
     else:
-        print 'Config file not found. Let us create a new one.'
+        print 'Wallet file not found. Let us create a new one.'
         input = raw_input('Enter private key in WIF format, brainwallet passphrase (use at least 128 bits of entropy!) or press enter to create new random private key: ')
 
         privkey, method = wallet.privkey_from_user_input(input)
@@ -40,7 +53,7 @@ def main(demo_mode=False):
         pw = getpass.getpass('Enter AES encryption password: ')
         pw2 = getpass.getpass('Enter password again: ')
         if pw != pw2:
-            raise Exception('Passwords does not match.')
+            raise Exception('Passwords do not match.')
 
         encr_privkey = wallet.encrypt_privkey(privkey, pw)
         wallet.create_wallet_file(wal_file_name, encr_privkey, wal_addr)
@@ -72,11 +85,12 @@ def main(demo_mode=False):
             print 'Random private key created. Saved private key is'
             print wif_privkey
 
-        print ' '
-        print 'Your address is: {0}'.format(wal_addr)
+        print 'Your address is'
+        print wal_addr
         return
 
-    print 'Wallet address: ' + wal_addr
+    print '** Address and Balance **'
+    print wal_addr
 
     all_unspent = []
     if demo_mode:
@@ -88,17 +102,21 @@ def main(demo_mode=False):
             try:
                 all_unspent = bc.blockr_unspent(wal_addr)
             except:
-                raise Exception('Could not get address history.')
+                raise Exception('Could not get unspent outputs.')
 
     balance = core.get_balance(all_unspent)
     if balance == 0:
-        print 'Address has zero balance. Send some coins and try again.'
+        print '0.0 BTC'
+        print ''
+        print 'Address has zero balance. Please send some coins.'
+        print 'Thank you for using Bitcoinista!'
         return
 
     btc_balance = core.satoshi_to_btc(balance)
 
-    print 'Wallet balance: {0} bitcoins'.format(btc_balance)
+    print '{0} BTC'.format(btc_balance)
     print ' '
+    print '** New Transaction**'
 
     destination_addr = None
     btc_amount = None
@@ -109,30 +127,42 @@ def main(demo_mode=False):
         destination_addr, btc_amount = core.parse_bitcoin_uri(clipboard_input)
 
     if destination_addr == None:
-        destination_addr = raw_input('Destination address (enter to abort)? ').strip()
+        destination_addr = raw_input('Destination (enter to abort): ').strip()
         if destination_addr == '':
             print 'Transaction aborted.'
             return
+    else:
+        print 'Destination: ' + destination_addr
 
     if btc_amount == None:
-        btc_amount = float(raw_input('How many bitcoins to send? '))
+        btc_amount = float(raw_input('Amount(BTC): '))
         if btc_amount <= 0.0:
-            raise Exception('Amount of bitcoins to send must be positive.')
+            raise Exception('Amount of BTC to send must be positive.')
+    else:
+        print 'Amount(BTC): {0}'.format(btc_amount)
         
     if not core.is_address_valid(destination_addr):
         raise Exception('Destination address {0} is invalid.'.format(destination_addr))
 
     amount_to_send = core.btc_to_satoshi(btc_amount)
 
-    if(balance < amount_to_send):
-        raise Exception("Insufficient funds to send {0} bitcoins.".format(btc_amount))
+    btc_txfee = core.satoshi_to_btc(txfee)
+    fee_input = raw_input('TX fee (Enter for {0} BTC):'.format(btc_txfee))
+    if fee_input != '':
+        btc_txfee = float(fee_input)
+        txfee = core.btc_to_satoshi(btc_txfee)
+        if btc_txfee < 0.0:
+            raise Exception('Negative TX fee')
+        elif txfee >= 100000:
+            input = raw_input('Your TX fee ({0} BTC) is high. Are you sure? (y to continue, other key to abort)'.format(btc_txfee))
+            if input != 'y':
+                print 'Transaction aborted'
+                return
 
-    print 'Do you want to send'
-    print '{0} bitcoins to address'.format(btc_amount)
-    print destination_addr + '?'
-    print 'To accept, enter your password. To abort, press enter.'
-    print ' '
+    if(balance < amount_to_send + txfee):
+        raise Exception("Insufficient funds to send {0} + {1} BTC.".format(btc_amount, btc_txfee))
 
+    print 'To sign and send transaction, input your password. Enter to abort.'
     pw = getpass.getpass()
     if pw == '\n' or pw == '':
         print 'Transaction aborted.'
@@ -155,27 +185,11 @@ def main(demo_mode=False):
 
     # Check wallet address consistency
     if addr != wal_addr:
-        raise Exception('Address from config file does not match address from private key!')
-        
-    txfee = 10000
-    btc_txfee = core.satoshi_to_btc(txfee)
-    fee_input = raw_input('Transaction fee? (Enter for default {0} bitcoins)'.format(btc_txfee))
-    if fee_input != '':
-        btc_txfee = float(fee_input)
-        txfee = core.btc_to_satoshi(btc_txfee)
-        if btc_txfee < 0.0:
-            raise Exception('Negative tx fee')
-        elif btc_txfee >= 0.001:
-            input = raw_input('Your tx fee ({0} bitcoins) is high. Are you sure? (y to continue, other key to abort)'.format(btc_txfee))
-            if input != 'y':
-                print 'Transaction aborted'
-                return
-
-    if(balance < amount_to_send + txfee):
-        raise Exception("Insufficient funds to send {0} + {1} bitcoins.".format(btc_amount, btc_txfee))
+        raise Exception('Address from config file does not match address from private key!')        
         
     tx_ins, tx_outs = core.simple_tx_inputs_outputs(addr, all_unspent, destination_addr, amount_to_send, txfee)
 
+    print ''
     print 'Creating and signing transaction...'
     tx = bc.mktx(tx_ins, tx_outs)
 
@@ -183,16 +197,21 @@ def main(demo_mode=False):
         tx = bc.sign(tx,i,prv)
 
     if demo_mode:
-        print 'Total unspent outputs before transaction: ' + str(all_unspent)
-        print ' '
-        print 'Transaction inputs: ' + str(tx_ins)
-        print ' '
-        print 'Transaction outputs: ' + str(tx_outs)
-        print ' '
-        print 'Deserialized final transaction: ' + str(bc.deserialize(tx))
-        print ' '
+        print ''
+        print 'Total unspent outputs before transaction: '
+        print all_unspent
+        print ''
+        print 'Transaction inputs:'
+        print tx_ins
+        print ''
+        print 'Transaction outputs:'
+        print tx_outs
+        print ''
+        print 'Deserialized final transaction:'
+        print bc.deserialize(tx)
+        print ''
+        print 'Thank you for using Bitcoinista (Demo Mode)!'
     else:
-        print ' '
         print 'Sending transaction...'
 
         try:
@@ -200,7 +219,7 @@ def main(demo_mode=False):
         except:
             bc.eligius_pushtx(tx)
 
-        print 'Transaction sent.'
+        print 'Transaction sent. Thank you for using Bitcoinista!'
     print ' '
 
     return
