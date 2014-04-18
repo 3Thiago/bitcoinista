@@ -1,4 +1,4 @@
-#Bitcoinista: Simple python bitcoin wallet for iOS#
+# Bitcoinista: Simple python bitcoin wallet for iOS #
 
 Bitcoinista is a simple bitcoin wallet with a text-based UI for spending small
 amounts of bitcoin on the go. It can run on the desktop but the main usecase is
@@ -11,10 +11,10 @@ Bitcoinista is built on the excellent [pybitcointools][] library which is
 leightweight enough to be run in Pythonista. It also uses [SlowAES][] which is a
 pure python implementation of AES.
 
-##Installation##
+## Installation ##
 
-To install Bitcoinista on your iOS device, first go to installer.py in the
-bitcoinista repository.
+To install Bitcoinista on your iOS device, first go to [installer.py][inst] in
+the Bitcoinista repository.
 
 Select all the code and copy it. Go to Pythonista, create a new script in the
 Script Library and paste the code in there. Now run it. This will install two
@@ -25,13 +25,13 @@ A video describing the installation can be found here:
 
 <http://youtu.be/Q2e3sX3Lkn0>
 
-If you want a shortcut to bitcoinista on your home screen you can go
-[here][omzicon], write "bitcoinista" as script name, and then add the page to
-your homescreen.
+If you want a shortcut to Bitcoinista on your home screen you can go
+[here][omzicon], write "bitcoinista" (note the lower case) as script name, and
+then add the page to your homescreen.
 
-##Usage##
+## Usage ##
 
-###Creating wallet###
+### Creating wallet ###
 
 The first time you start Bitcoinista, you will be asked to create a wallet. The
 wallet is just a single address/private key pair, and you can create it in one
@@ -41,7 +41,7 @@ of three ways:
 
 * Letting Bitcoinista create a random key using `pybitcointools.random_key()`
 
-* Supplying a brainwallet passphrase if you like using diceware or
+* Supplying a brainwallet passphrase if you like using [diceware][] or
   similar system to control your own randomness. **We strongly advice
   against using less than 128 bits of entropy for this passphrase.**
 
@@ -50,7 +50,7 @@ for the AES encryption of the private key. Once you've done this the
 wallet file `bitcoinista_wallet.json` will be created, containing the
 address and encrypted private key.
 
-###Transaction from bitcoin URI###
+### Transaction from bitcoin URI ###
 
 When scanning a QR code from a merchant the contents of the code is
 often a [Bitcoin URI][btcuri] and looks something like
@@ -67,12 +67,12 @@ A video demonstrating sending from a bitcoin URI is here:
 
 <http://youtu.be/JBRK0YJYMck>
 
-###Manual transaction###
+### Manual transaction ###
 
 If no bitcoin URI is in the clipboard Bitcoinista will ask you to
 enter the address to send to and the amount you wish to send.
 
-##Features##
+## Features ##
 
 * Runs on iOS, no jailbreak needed.
 
@@ -86,7 +86,7 @@ enter the address to send to and the amount you wish to send.
 * Ability to import your own private key to spend from paper wallet
   etc.
 
-##Limitations##
+## Limitations ##
 
 * Needs paid software to run on iOS: Pythonista is $6.99 in the App
   Store. Note that this author is not affiliated with Pythonista in
@@ -101,7 +101,7 @@ enter the address to send to and the amount you wish to send.
 
 * No testnet support at this time, but see Demo Mode below.
 
-##Demo mode##
+## Demo mode ##
 
 If you set the flag `demo_mode=True` in the script `bitcoinista.py`
 you can run Bitcoinista in demo mode. In this mode you will always
@@ -112,7 +112,7 @@ transactions so you can see which unspent outputs are selected, if the
 correct amount of change is sent etc. This is a good way of playing
 around with the interface without risking any coins.
 
-##Troubleshooting##
+## Troubleshooting ##
 
 The following error
 
@@ -132,3 +132,5 @@ sure the changes go into effect.
 [pybitcointools]: https://github.com/vbuterin/pybitcointools
 [pythonista]: http://www.omz-software.de/pythonista/
 [slowaes]: https://code.google.com/p/slowaes/
+[diceware]: http://world.std.com/~reinhold/diceware.html
+[inst]: https://github.com/christianlundkvist/bitcoinista/blob/master/installer.py
