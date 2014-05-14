@@ -5,6 +5,7 @@ import zipfile
 import tarfile
 import shutil
 import os
+import re
 
 def github_download(user, repo, branch):
     print 'Downloading {0}...'.format(repo)
@@ -18,7 +19,12 @@ def github_download(user, repo, branch):
     os.remove(zipname)
     print 'Done.'
     
-    dirname = repo + '-' + branch
+    # If branch is a version tag the directory
+    # is slightly different
+    if re.match('^v[0-9.]*$', branch):
+        dirname = repo + '-' + branch[1:]
+    else:
+        dirname = repo + '-' + branch
     return dirname
 
 def pypi_download(package, version):
@@ -38,9 +44,9 @@ def pypi_download(package, version):
 
 # Download pybitcointools
 
-user = 'christianlundkvist'
+user = 'vbuterin'
 repo = 'pybitcointools'
-branch = 'purepyhashbackup'
+branch = 'master'
 dirname = github_download(user, repo, branch)
 if os.path.isdir(repo):
 	shutil.rmtree(repo)
@@ -62,7 +68,7 @@ shutil.rmtree(dirname)
 
 user = 'christianlundkvist'
 repo = 'bitcoinista'
-branch = 'master'
+branch = 'v0.1'
 dirname = github_download(user, repo, branch)
 if os.path.isdir(repo):
 	shutil.rmtree(repo)
