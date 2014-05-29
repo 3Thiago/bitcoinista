@@ -1,8 +1,7 @@
 
 from model import Model, PasswordError
 from text_view import TextView
-import clipboard
-
+    
 class TextController:
     
     def __init__(self, user_mode = 'mainnet'):
@@ -41,9 +40,21 @@ class TextController:
         self.view.draw_address_and_balance(addr, balance)
         
         self.view.draw_new_transaction()
-        
-        clipboard_input = clipboard.get()
-        destination_addr, btc_amount = self.model.parse_bitcoin_uri(clipboard_input)
+
+        clipboard_exists = False
+        try:
+            import clipboard
+            clipboard_exists = True
+        except:
+            pass
+            
+        destination_addr = None
+        btc_amount = None
+
+        if clipboard_exists:
+            clipboard_input = clipboard.get()
+            destination_addr, btc_amount = self.model.parse_bitcoin_uri(clipboard_input)
+
         if destination_addr is None:
             destination_addr = self.view.request_destination_address()
             if destination_addr == '':
@@ -95,4 +106,3 @@ class TextController:
             raise Exception('Unsupported user mode ' + self.user_mode)
             
         return
-        
