@@ -31,7 +31,14 @@ class TextView:
         print addr
         print '{0} BTC'.format(btc_balance)
         print ' '
-     
+
+    def draw_zero_balance(self):
+        print 'Address has zero balance. Please send some coins.'
+        print 'Thank you for using Bitcoinista!'
+             
+    def draw_insufficient_balance(self):
+        print 'Insufficient balance!'
+
     def draw_new_transaction(self):
         print '** New Transaction **' 
         
@@ -108,7 +115,7 @@ class TextView:
         return destination_addr
 
     def request_send_amount(self):
-        btc_amount = float(raw_input('Amount(BTC): '))
+        btc_amount = raw_input('Amount(BTC): ')
         return btc_amount
 
     def draw_destination_address(self, dest_addr):

@@ -38,7 +38,10 @@ class TextController:
         addr = self.model.get_address()
         balance = self.model.get_balance()
         self.view.draw_address_and_balance(addr, balance)
-        
+        if balance == 0.0:
+            self.view.draw_zero_balance()
+            return
+
         self.view.draw_new_transaction()
 
         clipboard_exists = False
@@ -49,11 +52,11 @@ class TextController:
             pass
             
         destination_addr = None
-        btc_amount = None
+        btc_send_amount = None
 
         if clipboard_exists:
             clipboard_input = clipboard.get()
-            destination_addr, btc_amount = self.model.parse_bitcoin_uri(clipboard_input)
+            destination_addr, btc_send_amount = self.model.parse_bitcoin_uri(clipboard_input)
 
         if destination_addr is None:
             destination_addr = self.view.request_destination_address()
@@ -66,11 +69,16 @@ class TextController:
             self.model.set_destination_addr(destination_addr)
             self.view.draw_destination_address(destination_addr)
             
-        if btc_amount is None:
-            btc_amount = self.view.request_send_amount()
+        if btc_send_amount is None:
+            btc_send_amount = self.view.request_send_amount()
+            if btc_send_amount == '':
+                self.view.draw_abort()
+                return
+            else:
+                btc_send_amount = float(btc_send_amount)
         else:
-            self.view.draw_send_amount(btc_amount)
-        self.model.set_send_amount(btc_amount)
+            self.view.draw_send_amount(btc_send_amount)
+        self.model.set_send_amount(btc_send_amount)
         
         default_btc_txfee = self.model.get_txfee()
         btc_txfee = self.view.request_txfee(default_btc_txfee)
@@ -82,7 +90,12 @@ class TextController:
             if selection != 'y':
                 self.view.draw_abort()
                 return
-                
+
+        if not self.model.is_balance_sufficient():
+            self.view.draw_insufficient_balance()
+            self.view.draw_abort()
+            return
+                            
         wrong_pw = True
         while wrong_pw:
             pw = self.view.request_wallet_pw(ask_twice=False)

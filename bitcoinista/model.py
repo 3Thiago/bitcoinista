@@ -165,6 +165,18 @@ class Model:
         self.txfee = txfee
         return msg
     
+    def is_balance_sufficient(self):
+        if not self.is_wallet_loaded:
+            raise Exception('Tried to check for balance when wallet not loaded.')
+
+        if not self.is_send_amount_set:
+            raise Exception('Tried to check send amount when amount not set.')
+
+        if self.send_amount + self.txfee < self.balance:
+            return True
+        else:
+            return False
+
     def sign_tx(self, pw):
         if not self.is_wallet_loaded:
             raise Exception('Tried to spend when wallet not loaded.')

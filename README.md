@@ -103,7 +103,7 @@ enter the address to send to and the amount you wish to send.
 
 ## Demo mode ##
 
-If you set the flag `demo_mode=True` in the script `bitcoinista.py`
+If you set the flag `user_mode='demo'` in the script `bitcoinista.py`
 you can run Bitcoinista in demo mode. In this mode you will always
 have 0.8 fake coins in your wallet and you can run Bitcoinista as you
 normally would. Instead of sending a transaction to the network
@@ -114,17 +114,10 @@ around with the interface without risking any coins.
 
 ## Troubleshooting ##
 
-The following error
-
-    An error occurred: maximum recursion depth exceeded in cmp
-
-can be resolved in the following way: Restart Pythonista by
-double-clicking the home button and swipe up on the Pythonista
-screenshot.
-
-Also, if you install a newer version or remove Bitcoinista and install
-again you will have to restart Pythonista in the above way to make
-sure the changes go into effect.
+If you install a newer version or remove Bitcoinista and install again
+you will have to restart Pythonista for the changes to take effect.
+You can do this by double clicking the home button and swipe up on the
+Pythonista app.
 
 
 [btcuri]: https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki

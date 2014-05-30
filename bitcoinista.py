@@ -1,7 +1,7 @@
 import sys
 import bitcoinista
 
-mode = 'demo'
+user_mode = 'mainnet'
 if __name__ == '__main__':
     # Pythonista resets recursion 
     # limit to 256 in the interpreter
@@ -9,7 +9,7 @@ if __name__ == '__main__':
     reclimit = sys.getrecursionlimit()
     if reclimit > 1000:
         sys.setrecursionlimit(1000)
-    ctrl = bitcoinista.TextController(mode)
+    ctrl = bitcoinista.TextController(user_mode)
     try:
         ctrl.run()
     except Exception as e:
