@@ -168,7 +168,7 @@ class TextView:
 
     def draw_tx_start(self):
         print ''
-        print 'Signing and sending transaction...'
+        print 'Signing transaction...'
 
     def draw_mainnet_tx_finished(self):
         print ''

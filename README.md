@@ -8,7 +8,7 @@ bitcoin network, allowing you to spend your coins on your iPhone or iPad without
 your private key ever leaving your device.
 
 Bitcoinista is built on the excellent [pybitcointools][] library which is
-leightweight enough to be run in Pythonista. It also uses [SlowAES][] which is a
+lightweight enough to be run in Pythonista. It also uses [SlowAES][] which is a
 pure python implementation of AES.
 
 ## Installation ##

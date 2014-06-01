@@ -172,7 +172,7 @@ class Model:
         if not self.is_send_amount_set:
             raise Exception('Tried to check send amount when amount not set.')
 
-        if self.send_amount + self.txfee < self.balance:
+        if self.send_amount + self.txfee <= self.balance:
             return True
         else:
             return False
@@ -190,13 +190,12 @@ class Model:
         if self.send_amount + self.txfee > self.balance:
             raise LowBalanceError("Insufficient funds to send {0} + {1} BTC.".format(core.satoshi_to_btc(self.send_amount), core.satoshi_to_btc(self.txfee)))
             
-        prv = ''
         try:
             prv = wallet.decrypt_privkey(self.encr_privkey, pw)
+            addr = bc.privtoaddr(prv)
         except:
             raise PasswordError("Wrong password!")
         
-        addr = bc.privtoaddr(prv)
         if addr != self.addr:
             raise Exception('Address from wallet does not match address from private key!')
 
