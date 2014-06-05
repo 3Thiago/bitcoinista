@@ -33,11 +33,27 @@ def parse_bitcoin_uri(uri_string):
     else:
         return None, None
 
-def is_address_valid(addr):
+# Returns valid for both scriptpubkey
+# and scripthash addresses
+def is_address_valid(addr, on_testnet=False):
+    
+    # Check if scripthash or
+    # pubkey type address
+    if on_testnet:
+        if addr[0] == '2':
+            magic_byte = 192
+        else:
+            magic_byte = 111
+    else:
+        if addr[0] == '3':
+            magic_byte = 5
+        else:
+            magic_byte = 0
+        
     addr_valid = True
     try:
         bin_addr = bc.b58check_to_bin(addr)
-        if bc.bin_to_b58check(bin_addr) != addr:
+        if bc.bin_to_b58check(bin_addr, magic_byte) != addr:
             addr_valid = False
     except:
         addr_valid = False

@@ -21,10 +21,22 @@ class Model:
     
     def __init__(self, user_mode = 'mainnet'):
         
-        self.wallet_filename = "bitcoinista_wallet.json"
+        self.user_mode = user_mode
+        
+        if self.user_mode == 'testnet':
+            self.wallet_filename = "bitcoinista_wallet_testnet.json"
+        else:
+            self.wallet_filename = "bitcoinista_wallet.json"
+        
+        if self.user_mode == 'testnet':
+            self.addr_vbyte = 111
+            self.privkey_vbyte = 239
+        else:
+            self.addr_vbyte = 0
+            self.privkey_vbyte = 0
+        
         self.txfee = 10000
         self.txfee_warn_above = 100000
-        self.user_mode = user_mode
         self.is_wallet_loaded = False
         
         self.demo_unspent = [{'output': '2818b4de824faa41539c4501cc68912e2da07a050b407024c56f8e622cc208c4:1', 'value': 10000000},
@@ -59,6 +71,12 @@ class Model:
                     self.unspent = bc.blockr_unspent(self.addr)
                 except:
                     raise IOError('Could not get unspent outputs.')
+        elif self.user_mode == 'testnet':
+            try:
+                use_testnet = True
+                self.unspent = bc.blockr_unspent(self.addr, use_testnet)
+            except:
+                raise IOError('Could not get unspent outputs.')
         else:
             raise Exception('Unsupported user_mode ' + self.user_mode)
         
@@ -76,7 +94,7 @@ class Model:
         elif method == 'random':
             privkey = bc.random_key()
         
-        wal_addr = bc.privtoaddr(privkey)
+        wal_addr = bc.privtoaddr(privkey, self.addr_vbyte)
         encr_privkey = wallet.encrypt_privkey(privkey, aes_pw)
         wallet.create_wallet_file(self.wallet_filename, encr_privkey, wal_addr)
         
@@ -102,7 +120,7 @@ class Model:
         except:
             raise PasswordError("Wrong password!")
  
-        wif_privkey = bc.encode_privkey(prv, 'wif')
+        wif_privkey = bc.encode_privkey(prv, 'wif', self.privkey_vbyte)
     
         return wif_privkey
         
@@ -133,7 +151,7 @@ class Model:
         
     def set_destination_addr(self, dest_addr):
 
-        if not core.is_address_valid(dest_addr):
+        if not core.is_address_valid(dest_addr, (self.user_mode=='testnet') ):
             raise InputError('Destination address {0} is invalid.'.format(dest_addr))
 
         self.dest_addr = dest_addr
@@ -212,13 +230,21 @@ class Model:
         
     def push_tx(self, tx):
         # Send transaction
-        try:
-            bc.pushtx(tx)
-        except:
+        if self.user_mode == 'mainnet':
             try:
-                bc.eligius_pushtx(tx)
+                bc.pushtx(tx)
+            except:
+                try:
+                    bc.eligius_pushtx(tx)
+                except:
+                    raise IOError("Unable to push transaction!")
+        elif self.user_mode == 'testnet':
+            try:
+                bc.blockr_pushtx(tx, use_testnet=True)
             except:
                 raise IOError("Unable to push transaction!")
-        
+        else:
+            raise Exception("User mode {0} not supported for push_tx.".format(self.user_mode))
+            
         return
         

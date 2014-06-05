@@ -23,6 +23,11 @@ class TextView:
             print '** BITCOINISTA (DEMO MODE) **'
             print '*****************************'
             print ''
+        elif user_mode == 'testnet':
+            print '***************************'
+            print '** BITCOINISTA (TESTNET) **'
+            print '***************************'
+            print ''
         else:
             raise Exception('Unsupported user mode ' + user_mode)   
                

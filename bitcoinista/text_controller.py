@@ -112,7 +112,7 @@ class TextController:
             self.view.draw_tx_start()
             unspent = self.model.get_unspent()
             self.view.draw_demo_tx_outputs(unspent, tx_ins, tx_outs, tx)
-        elif self.user_mode == 'mainnet':
+        elif self.user_mode == 'mainnet' or self.user_mode == 'testnet':
             self.view.draw_tx_start()
             self.model.push_tx(tx)
             self.view.draw_mainnet_tx_finished()
