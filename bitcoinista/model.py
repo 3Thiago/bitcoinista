@@ -210,7 +210,7 @@ class Model:
             
         try:
             prv = wallet.decrypt_privkey(self.encr_privkey, pw)
-            addr = bc.privtoaddr(prv)
+            addr = bc.privtoaddr(prv, self.addr_vbyte)
         except:
             raise PasswordError("Wrong password!")
         
