@@ -118,5 +118,28 @@ class TestCore(unittest.TestCase):
         self.assertEqual(outputs[0]['address'], to_addr)
         self.assertEqual(outputs[0]['value'], amount_to_send)
 
+    def test_is_address_valid(self):
+
+        good_mainnet_addr = '1AePfBmFQJVdvgxMV5MRs5trExecFq8rTR'
+        bad_mainnet_addr  = '1AePfBmFQJWdvgxMV5MRs5trExecFq8rTR'
+        good_mainnet_p2sh = '31oSGBBNrpCiENH3XMZpiP6GTC4tad4bMy'
+        bad_mainnet_p2sh  = '31oSGBBNrpCiENH4XMZpiP6GTC4tad4bMy'
+        good_testnet_addr = 'msj42CCGruhRsFrGATiUuh25dtxYtnpbTx'
+        bad_testnet_addr  = 'msj42CCGruhRsFrGATiUuh25dtxYTnpbTx'
+        good_testnet_p2sh = '2LYYeRaQCCiRRRJospWevnArfJSgSPgqG3a'
+        bad_testnet_p2sh  = '2LYYeRaQCCiRRRJospWEVNArfJSgSPgqG3a'
+
+        # Mainnet
+        self.assertTrue(bitcoinista.is_address_valid(good_mainnet_addr))
+        self.assertFalse(bitcoinista.is_address_valid(bad_mainnet_addr, on_testnet=False))
+        self.assertTrue(bitcoinista.is_address_valid(good_mainnet_p2sh))
+        self.assertFalse(bitcoinista.is_address_valid(bad_mainnet_p2sh, on_testnet=False))
+
+        # Testnet
+        self.assertTrue(bitcoinista.is_address_valid(good_testnet_addr, on_testnet=True))
+        self.assertFalse(bitcoinista.is_address_valid(bad_testnet_addr, on_testnet=True))
+        self.assertTrue(bitcoinista.is_address_valid(good_testnet_p2sh, on_testnet=True))
+        self.assertFalse(bitcoinista.is_address_valid(bad_testnet_p2sh, on_testnet=True))
+                
 if __name__ == '__main__':
     unittest.main()

@@ -3,6 +3,7 @@ import bitcoinista
 
 # Supported user modes are:
 # 'mainnet'
+# 'testnet'
 # 'demo'
 
 user_mode = 'mainnet'
@@ -19,3 +20,4 @@ if __name__ == '__main__':
         ctrl.run()
     except Exception as e:
         print 'An error occurred: {0}'.format(e)
+

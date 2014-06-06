@@ -37,25 +37,3 @@ def decrypt_privkey(encr_privkey, pw):
     privkey = aes.decryptData(bin_pwhash, bin_encr_privkey)
 
     return privkey
-
-def privkey_from_user_input(input):
-    method = ''
-    privkey = ''
-    if input == '':
-        method = 'random'
-        privkey = bc.random_key()
-    else:
-        format = ''
-        try:
-            format = bc.get_privkey_format(input)
-        except:
-            format = ''
-        
-        if format == 'wif':
-            method = 'wif'
-            privkey = bc.encode_privkey(input, 'hex')
-        else:
-            method = 'brain'
-            privkey = bc.sha256(input)
-
-    return privkey, method

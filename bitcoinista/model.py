@@ -29,11 +29,9 @@ class Model:
             self.wallet_filename = "bitcoinista_wallet.json"
         
         if self.user_mode == 'testnet':
-            self.addr_vbyte = 111
-            self.privkey_vbyte = 239
+            self.magic_byte = 111
         else:
-            self.addr_vbyte = 0
-            self.privkey_vbyte = 0
+            self.magic_byte = 0
         
         self.txfee = 10000
         self.txfee_warn_above = 100000
@@ -94,7 +92,7 @@ class Model:
         elif method == 'random':
             privkey = bc.random_key()
         
-        wal_addr = bc.privtoaddr(privkey, self.addr_vbyte)
+        wal_addr = bc.privtoaddr(privkey, self.magic_byte)
         encr_privkey = wallet.encrypt_privkey(privkey, aes_pw)
         wallet.create_wallet_file(self.wallet_filename, encr_privkey, wal_addr)
         
@@ -120,7 +118,7 @@ class Model:
         except:
             raise PasswordError("Wrong password!")
  
-        wif_privkey = bc.encode_privkey(prv, 'wif', self.privkey_vbyte)
+        wif_privkey = bc.encode_privkey(prv, 'wif', self.magic_byte)
     
         return wif_privkey
         
@@ -210,7 +208,7 @@ class Model:
             
         try:
             prv = wallet.decrypt_privkey(self.encr_privkey, pw)
-            addr = bc.privtoaddr(prv, self.addr_vbyte)
+            addr = bc.privtoaddr(prv, self.magic_byte)
         except:
             raise PasswordError("Wrong password!")
         
@@ -226,7 +224,7 @@ class Model:
         for i in range(len(tx_ins)):
             tx = bc.sign(tx,i,prv)
         
-        return tx_ins, tx_outs, tx
+        return tx_ins, tx_outs, tx, bc.deserialize(tx)
         
     def push_tx(self, tx):
         # Send transaction

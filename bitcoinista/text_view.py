@@ -153,7 +153,7 @@ class TextView:
     def draw_abort(self):
         print 'Transaction aborted.'
 
-    def draw_demo_tx_outputs(self, unspent, tx_ins, tx_outs, tx):
+    def draw_demo_tx_outputs(self, unspent, tx_ins, tx_outs, tx, tx_struct):
         print ''
         print '** Transaction info **'
         print ''
@@ -168,6 +168,9 @@ class TextView:
         print ''
         print 'Raw final transaction:'
         print tx
+        print ''
+        print 'Deserialized transaction'
+        print tx_struct
         print ''
         print 'Thank you for using Bitcoinista (Demo Mode)!'
 

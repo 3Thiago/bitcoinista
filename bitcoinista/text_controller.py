@@ -103,7 +103,7 @@ class TextController:
                 self.view.draw_abort()
                 return
             try:
-                tx_ins, tx_outs, tx = self.model.sign_tx(pw)
+                tx_ins, tx_outs, tx, tx_struct = self.model.sign_tx(pw)
                 wrong_pw = False
             except PasswordError:
                 continue
@@ -111,7 +111,7 @@ class TextController:
         if self.user_mode == 'demo':
             self.view.draw_tx_start()
             unspent = self.model.get_unspent()
-            self.view.draw_demo_tx_outputs(unspent, tx_ins, tx_outs, tx)
+            self.view.draw_demo_tx_outputs(unspent, tx_ins, tx_outs, tx, tx_struct)
         elif self.user_mode == 'mainnet' or self.user_mode == 'testnet':
             self.view.draw_tx_start()
             self.model.push_tx(tx)
