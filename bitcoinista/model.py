@@ -25,12 +25,9 @@ class Model:
         
         if self.user_mode == 'testnet':
             self.wallet_filename = "bitcoinista_wallet_testnet.json"
-        else:
-            self.wallet_filename = "bitcoinista_wallet.json"
-        
-        if self.user_mode == 'testnet':
             self.magic_byte = 111
         else:
+            self.wallet_filename = "bitcoinista_wallet.json"
             self.magic_byte = 0
         
         self.txfee = 10000
@@ -71,8 +68,7 @@ class Model:
                     raise IOError('Could not get unspent outputs.')
         elif self.user_mode == 'testnet':
             try:
-                use_testnet = True
-                self.unspent = bc.blockr_unspent(self.addr, use_testnet)
+                self.unspent = bc.blockr_unspent(self.addr, 'testnet')
             except:
                 raise IOError('Could not get unspent outputs.')
         else:
@@ -238,7 +234,7 @@ class Model:
                     raise IOError("Unable to push transaction!")
         elif self.user_mode == 'testnet':
             try:
-                bc.blockr_pushtx(tx, use_testnet=True)
+                bc.blockr_pushtx(tx, 'testnet')
             except:
                 raise IOError("Unable to push transaction!")
         else:
