@@ -1,5 +1,12 @@
 # Release Notes #
 
+## Version 0.2 - 2014-06-10 ##
+
+* Added full support for testnet using the testnet APIs from
+  [blockr.io][blockr] recently introduced in [pybitcointools][].
+
+* Now fully supports sending to P2SH addresses.
+
 ## Version 0.1.1 - 2014-06-01 ##
 
 Removed `main.py` and refactored the code therein using a
@@ -19,3 +26,6 @@ Initial release. Included features:
   in WIF format.
 * Send bitcoins either manually or from URI in clipboard.
 * AES encryption of private key.
+
+[pybitcointools]: https://github.com/vbuterin/pybitcointools
+[blockr]: http://blockr.io

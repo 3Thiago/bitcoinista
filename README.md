@@ -76,7 +76,8 @@ enter the address to send to and the amount you wish to send.
 
 * Runs on iOS, no jailbreak needed.
 
-* Open source: Full transparency of the code.
+* Open source: Runs directly from the python source for complete
+  transparency.
 
 * Quickly spend using a scanned QR code.
 
@@ -85,6 +86,8 @@ enter the address to send to and the amount you wish to send.
 
 * Ability to import your own private key to spend from paper wallet
   etc.
+
+* Testnet support for playing around without risking real bitcoins.
 
 ## Limitations ##
 
@@ -99,7 +102,14 @@ enter the address to send to and the amount you wish to send.
 
 * No GUI: Simple, text-based interface.
 
-* No testnet support at this time, but see Demo Mode below.
+## Testnet mode ##
+
+If you set the flag `user_mode='testnet'` in the script
+`bitcoinista.py` you'll be able to run Bitcoinista in testnet
+mode. Bitcoinista will generate a testnet address and can send and
+receive testnet coins as you would bitcoins. All you need to do is to
+grab a few coins from a [testnet faucet][testfaucet] and you can start
+testing.
 
 ## Demo mode ##
 
@@ -110,7 +120,8 @@ normally would. Instead of sending a transaction to the network
 Bitcoinista will simply display the inputs and outputs of the
 transactions so you can see which unspent outputs are selected, if the
 correct amount of change is sent etc. This is a good way of playing
-around with the interface without risking any coins.
+around with the interface without risking any coins. Demo mode also
+works with no internet connection.
 
 ## Troubleshooting ##
 
@@ -127,3 +138,4 @@ Pythonista app.
 [slowaes]: https://code.google.com/p/slowaes/
 [diceware]: http://world.std.com/~reinhold/diceware.html
 [inst]: https://github.com/christianlundkvist/bitcoinista/blob/master/installer.py
+[testfaucet]: http://tpfaucet.appspot.com
