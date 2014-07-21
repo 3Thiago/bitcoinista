@@ -33,22 +33,30 @@ def parse_bitcoin_uri(uri_string):
     else:
         return None, None
 
-# Returns valid for both scriptpubkey
-# and scripthash addresses
+# Returns valid for both scriptpubkey,
+# scripthash and stealth addresses
 def is_address_valid(addr, on_testnet=False):
     
-    # Check if scripthash or
-    # pubkey type address
+    # Check if scripthash,
+    # pubkey or stealth address
     if on_testnet:
         if addr[0] == '2':
             magic_byte = 192
-        else:
+        elif addr[0] == 'm' or addr[0] == 'n':
             magic_byte = 111
+        elif addr[0] == 'w':
+            magic_byte = 43
+        else:
+            return False
     else:
         if addr[0] == '3':
             magic_byte = 5
-        else:
+        elif addr[0] == '1':
             magic_byte = 0
+        elif addr[0] == 'v':
+            magic_byte = 42
+        else:
+            return False
         
     addr_valid = True
     try:
@@ -64,9 +72,20 @@ def simple_tx_inputs_outputs(from_addr, from_addr_unspent, to_addr, amount_to_se
 
     selected_unspent = bc.select(from_addr_unspent, amount_to_send+txfee)
     selected_unspent_bal = get_balance(selected_unspent)
-
     changeval = selected_unspent_bal - amount_to_send - txfee
-    tx_outs = [{'value' : amount_to_send, 'address' : to_addr}]
+    if to_addr[0] == 'v' or to_addr[0] == 'w':
+        # stealth
+        ephem_privkey = bc.random_key()
+        nonce = int(bc.random_key()[:8],16)
+        if to_addr[0] == 'v':
+            network = 'btc'
+        else:
+            network = 'testnet'
+            
+        tx_outs = bc.mk_stealth_tx_outputs(to_addr, amount_to_send, ephem_privkey, nonce, network)
+    else: 
+        tx_outs = [{'value' : amount_to_send, 'address' : to_addr}]
+        
     if changeval > 0:
         tx_outs.append({'value' : changeval, 'address' : from_addr})
 
