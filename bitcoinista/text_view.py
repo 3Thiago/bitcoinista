@@ -182,4 +182,8 @@ class TextView:
         print ''
         print 'Transaction sent. Thank you for using Bitcoinista!'
 
-        
+    def draw_ephem_pubkey_from_stealth_tx(self, ephem_pubkey):
+        print ''
+        print 'The ephemeral public key for your stealth payment is:'
+        print ephem_pubkey
+        print 'With this key the recipient can redeem the payment.'

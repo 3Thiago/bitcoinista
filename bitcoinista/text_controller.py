@@ -108,13 +108,18 @@ class TextController:
             except PasswordError:
                 continue
         
+        ephem_pubkey = self.model.get_ephem_pubkey_if_stealth(tx_outs)
         if self.user_mode == 'demo':
             self.view.draw_tx_start()
             unspent = self.model.get_unspent()
             self.view.draw_demo_tx_outputs(unspent, tx_ins, tx_outs, tx, tx_struct)
+            if ephem_pubkey is not None:
+                self.view.draw_ephem_pubkey_from_stealth_tx(ephem_pubkey)
         elif self.user_mode == 'mainnet' or self.user_mode == 'testnet':
             self.view.draw_tx_start()
             self.model.push_tx(tx)
+            if ephem_pubkey is not None:
+                self.view.draw_ephem_pubkey_from_stealth_tx(ephem_pubkey)
             self.view.draw_mainnet_tx_finished()
         else:
             raise Exception('Unsupported user mode ' + self.user_mode)

@@ -82,7 +82,12 @@ class Model:
     def create_wallet(self, method, input, aes_pw):
         privkey = ''
         if method == 'wif':
-            privkey = bc.encode_privkey(input, 'hex')
+            fmt = bc.get_privkey_format(input)
+            if fmt == 'wif' or fmt == 'hex':
+                privkey = bc.encode_privkey(input, 'hex')
+            elif fmt == 'wif_compressed' or fmt == 'hex_compressed':
+                privkey = bc.encode_privkey(input, 'hex_compressed')
+                
         elif method == 'brain':
             privkey = bc.sha256(input)
         elif method == 'random':
@@ -241,4 +246,14 @@ class Model:
             raise Exception("User mode {0} not supported for push_tx.".format(self.user_mode))
             
         return
+    
+    def get_ephem_pubkey_if_stealth(self, tx_outs):
         
+        if 'script' in tx_outs[0]:
+            try:
+                return bc.ephem_pubkey_from_tx_script(tx_outs[0]['script'])
+            except:
+                return None
+        else:
+            return None
+
