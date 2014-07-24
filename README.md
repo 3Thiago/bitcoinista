@@ -89,6 +89,8 @@ enter the address to send to and the amount you wish to send.
 
 * Testnet support for playing around without risking real bitcoins.
 
+* Ability to send to stealth addresses. See below.
+
 ## Limitations ##
 
 * Needs paid software to run on iOS: Pythonista is $6.99 in the App
@@ -101,6 +103,24 @@ enter the address to send to and the amount you wish to send.
   a time.
 
 * No GUI: Simple, text-based interface.
+
+## Stealth Address support ##
+
+Bitcoinista supports sending to [stealth addresses][stealth]. This is
+an experimental feature and is only supported in Testnet and Demo
+modes at this time.
+
+Stealth addresses are special addresses that can be reused for
+receiving payments without impacting privacy. When sending to a
+stealth address a random temporary bitcoin address is created where
+the payment is sent. At the same time an *ephemeral public key* is
+created and stored in the blockchain. The owner of the stealth address
+can use the ephemeral public key together with his stealth private
+keys to create the private key to the temporary address and redeem the
+payment.
+
+An example of wallet software that uses stealth addresses is the
+feature-rich [Dark Wallet][] (currently in Alpha).
 
 ## Testnet mode ##
 
@@ -139,3 +159,5 @@ Pythonista app.
 [diceware]: http://world.std.com/~reinhold/diceware.html
 [inst]: https://github.com/christianlundkvist/bitcoinista/blob/master/installer.py
 [testfaucet]: http://tpfaucet.appspot.com
+[stealth]: http://sourceforge.net/p/bitcoin/mailman/message/31813471/
+[dark wallet]: https://github.com/darkwallet/darkwallet

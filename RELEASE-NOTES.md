@@ -1,5 +1,14 @@
 # Release Notes #
 
+## Version 0.3 - 2014-07-23 ##
+
+* Add support for sending to *basic stealth addresses*, i.e. stealth
+addresses that have one scan key, one spend key, and no prefix.
+
+* Fixed inconsistent handling of imported compressed keys.
+
+* Demo mode now uses testnet addresses.
+
 ## Version 0.2 - 2014-06-10 ##
 
 * Added full support for testnet using the testnet APIs from
