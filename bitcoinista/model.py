@@ -23,7 +23,7 @@ class Model:
         
         self.user_mode = user_mode
         
-        if self.user_mode == 'testnet':
+        if self.user_mode == 'testnet' or self.user_mode == 'demo':
             self.wallet_filename = "bitcoinista_wallet_testnet.json"
             self.magic_byte = 111
         else:
@@ -118,9 +118,15 @@ class Model:
             prv = wallet.decrypt_privkey(self.encr_privkey, pw)
         except:
             raise PasswordError("Wrong password!")
- 
-        wif_privkey = bc.encode_privkey(prv, 'wif', self.magic_byte)
-    
+
+        frm = bc.get_privkey_format(prv)
+        if frm == 'hex':
+            wif_privkey = bc.encode_privkey(prv, 'wif', self.magic_byte)
+        elif frm == 'hex_compressed':
+            wif_privkey = bc.encode_privkey(prv, 'wif_compressed', self.magic_byte)
+        else:
+            raise Exception('Unrecognized private key format: ' + frm)
+            
         return wif_privkey
         
     def get_address(self):
@@ -150,7 +156,8 @@ class Model:
         
     def set_destination_addr(self, dest_addr):
 
-        if not core.is_address_valid(dest_addr, (self.user_mode=='testnet') ):
+        is_testnet_or_demo = (self.user_mode=='testnet' or self.user_mode=='demo')
+        if not core.is_address_valid(dest_addr, is_testnet_or_demo):
             raise InputError('Destination address {0} is invalid.'.format(dest_addr))
 
         self.dest_addr = dest_addr
