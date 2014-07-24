@@ -78,7 +78,8 @@ def simple_tx_inputs_outputs(from_addr, from_addr_unspent, to_addr, amount_to_se
         ephem_privkey = bc.random_key()
         nonce = int(bc.random_key()[:8],16)
         if to_addr[0] == 'v':
-            network = 'btc'
+            #network = 'btc'
+            raise Exception('Stealth address payments only supported on testnet at this time.')
         else:
             network = 'testnet'
             
