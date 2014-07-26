@@ -83,15 +83,17 @@ class Model:
         privkey = ''
         if method == 'wif':
             fmt = bc.get_privkey_format(input)
-            if fmt == 'wif' or fmt == 'hex':
+            if fmt == 'wif':
                 privkey = bc.encode_privkey(input, 'hex')
-            elif fmt == 'wif_compressed' or fmt == 'hex_compressed':
+            elif fmt == 'wif_compressed':
                 privkey = bc.encode_privkey(input, 'hex_compressed')
+            else:
+                raise Exception('Unrecoginized format for private key.')
                 
-        elif method == 'brain':
-            privkey = bc.sha256(input)
         elif method == 'random':
             privkey = bc.random_key()
+        else:
+            raise Exception('Unsupported method: {0}.'.format(method))
         
         wal_addr = bc.privtoaddr(privkey, self.magic_byte)
         encr_privkey = wallet.encrypt_privkey(privkey, aes_pw)
@@ -108,6 +110,17 @@ class Model:
             raise Exception('Inconsistency in encrypting/decrypting private key!')
         
         return
+
+    def is_wif_privkey_valid(self, privkey):
+        try:
+            frm = bc.get_privkey_format(privkey)
+        except:
+            return False
+        
+        if frm == 'wif' or frm == 'wif_compressed':
+            return True
+        else:
+            return False
     
     def get_wif_privkey(self, pw):
         if not self.is_wallet_loaded:

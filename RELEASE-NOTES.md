@@ -9,6 +9,9 @@ addresses that have one scan key, one spend key, and no prefix.
 
 * Demo mode now uses testnet addresses.
 
+* Removed the ability to use a brainwallet passphrase to create the
+  private key.
+
 ## Version 0.2 - 2014-06-10 ##
 
 * Added full support for testnet using the testnet APIs from

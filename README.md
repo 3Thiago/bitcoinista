@@ -35,15 +35,11 @@ then add the page to your homescreen.
 
 The first time you start Bitcoinista, you will be asked to create a wallet. The
 wallet is just a single address/private key pair, and you can create it in one
-of three ways:
+of two ways:
 
 * Importing your own private key in WIF format.
 
 * Letting Bitcoinista create a random key using `pybitcointools.random_key()`
-
-* Supplying a brainwallet passphrase if you like using [diceware][] or
-  similar system to control your own randomness. **We strongly advice
-  against using less than 128 bits of entropy for this passphrase.**
 
 Once you've created the wallet you will be asked to select a password
 for the AES encryption of the private key. Once you've done this the
@@ -141,7 +137,8 @@ Bitcoinista will simply display the inputs and outputs of the
 transactions so you can see which unspent outputs are selected, if the
 correct amount of change is sent etc. This is a good way of playing
 around with the interface without risking any coins. Demo mode also
-works with no internet connection.
+works with no internet connection. Testnet addresses are used in Demo
+mode.
 
 ## Troubleshooting ##
 

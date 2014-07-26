@@ -51,20 +51,19 @@ class TextView:
         print 'Wallet file not found. Let us create a new one.'
         print 'Enter method for generating private key:'
         print '* (r)andom key'
-        print '* (b)rainwallet passphrase'
         print '* Imported (p)rivate key'
         
         input = ''
-        while input != 'r' and input != 'b' and input != 'p':
-            input = raw_input('Select method (r/b/p):')
+        while input != 'r' and input != 'p':
+            input = raw_input('Select method (r/p):')
         method = ''
         if input == 'r':
             method = 'random'
-        elif input == 'b':
-            method = 'brain'
         elif input == 'p':
             method = 'wif'
-        
+        else:
+            raise Exception('Unrecoginzed input: ' + input)
+                    
         return method
         
     def request_create_wallet_input(self, method):
@@ -72,8 +71,6 @@ class TextView:
         input = ''
         if method == 'wif':
             input = raw_input('Enter private key in WIF format:')
-        elif method == 'brain':
-            input = raw_input('Enter brainwallet passphrase (use at least 128 bits of entropy!):')
         else:
             raise Exception('Unsupported method type for input request.')
         
@@ -99,11 +96,6 @@ class TextView:
             print 'and the saved private key is'
             print wif_privkey
             print 'Make sure they are the same!'
-        elif method == 'brain':
-            print 'Brain wallet created from string'
-            print input
-            print 'with saved private key'
-            print wif_privkey
         elif method == 'random':
             print 'Random private key created. Saved private key is'
             print wif_privkey

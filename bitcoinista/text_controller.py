@@ -22,8 +22,10 @@ class TextController:
         if not found_wallet:
             method = self.view.request_create_wallet_method()
             input = None
-            if method != 'random':
+            if method == 'wif':
                 input = self.view.request_create_wallet_input(method)
+                if not self.model.is_wif_privkey_valid(input):
+                    raise Exception('Unrecognized format of WIF private key.')
             pw = None
             while pw is None:
                 pw = self.view.request_wallet_pw(ask_twice=True)
