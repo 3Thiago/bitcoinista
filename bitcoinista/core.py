@@ -33,6 +33,19 @@ def parse_bitcoin_uri(uri_string):
     else:
         return None, None
 
+# Returns 'btc' if the address appears
+# to be a mainnet address and 'testnet'
+# if it appears to be a testnet address
+# The checking is done only on the first
+# character.
+def get_address_network_type(addr):
+    if addr[0] in ['2', 'm', 'n', 'w']:
+        return 'testnet'
+    elif addr[0] in ['3', '1', 'v']:
+        return 'btc'
+    else:
+        raise Exception('Unknown address type.')
+
 # Returns valid for both scriptpubkey,
 # scripthash and stealth addresses
 def is_address_valid(addr, on_testnet=False):
@@ -69,6 +82,9 @@ def is_address_valid(addr, on_testnet=False):
     return addr_valid
 
 def simple_tx_inputs_outputs(from_addr, from_addr_unspent, to_addr, amount_to_send, txfee):
+
+    if get_address_network_type(from_addr) != get_address_network_type(to_addr):
+        raise Exception('Attempting to create transaction between networks!')
 
     selected_unspent = bc.select(from_addr_unspent, amount_to_send+txfee)
     selected_unspent_bal = get_balance(selected_unspent)
