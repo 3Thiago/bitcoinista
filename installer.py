@@ -68,7 +68,7 @@ shutil.rmtree(dirname)
 
 user = 'christianlundkvist'
 repo = 'bitcoinista'
-branch = 'v0.2'
+branch = 'v0.3'
 dirname = github_download(user, repo, branch)
 if os.path.isdir(repo):
 	shutil.rmtree(repo)
