@@ -1,6 +1,7 @@
 import os
 import wallet, core
 import pybitcointools as bc
+import json
 
 class PasswordError(Exception):
     # Exception thrown when wrong password
@@ -176,7 +177,23 @@ class Model:
         self.dest_addr = dest_addr
         self.is_dest_addr_set = True
         return
+    
+    def parse_send_amount(self, input_send_amount, btcusd_spot):
+        if '$' in input_send_amount:
+            if btcusd_spot <= 0.0:
+                raise Exception('Unable to get exchange rate for local currency. Please specify amount in BTC instead.')
+            usd_send_amount = float(input_send_amount.replace('$', ''))
+            btc_send_amount = (1.0*usd_send_amount) / btcusd_spot
+            sat_send_amount = core.btc_to_satoshi(btc_send_amount)
+            btc_send_amount = core.satoshi_to_btc(sat_send_amount)
+        else:
+            btc_send_amount = float(input_send_amount)
+            sat_send_amount = core.btc_to_satoshi(btc_send_amount)
+            btc_send_amount = core.satoshi_to_btc(sat_send_amount)
+            usd_send_amount = btc_send_amount*btcusd_spot
         
+        return btc_send_amount, usd_send_amount
+    
     def set_send_amount(self, btc_amount):
         
         amount = core.btc_to_satoshi(btc_amount)
@@ -276,4 +293,16 @@ class Model:
                 return None
         else:
             return None
+
+    def get_btcusd_spot(self):
+        url = 'https://blockchain.info/ticker'
+        try:
+            data = bc.make_request(url)
+        except:
+            if self.user_mode == 'demo':
+                return 588.0
+            else:
+                return 0.0
+        jsonobj = json.loads(data)
+        return float(jsonobj['USD']['15m'])
 

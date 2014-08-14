@@ -39,7 +39,8 @@ class TextController:
         
         addr = self.model.get_address()
         balance = self.model.get_balance()
-        self.view.draw_address_and_balance(addr, balance)
+        btcusd_spot = self.model.get_btcusd_spot()
+        self.view.draw_address_and_balance(addr, balance, btcusd_spot)
         if balance == 0.0:
             self.view.draw_zero_balance()
             return
@@ -72,14 +73,15 @@ class TextController:
             self.view.draw_destination_address(destination_addr)
             
         if btc_send_amount is None:
-            btc_send_amount = self.view.request_send_amount()
+            input_send_amount = self.view.request_send_amount()
+            btc_send_amount, usd_send_amount = self.model.parse_send_amount(input_send_amount, btcusd_spot)
             if btc_send_amount == '':
                 self.view.draw_abort()
                 return
-            else:
-                btc_send_amount = float(btc_send_amount)
         else:
-            self.view.draw_send_amount(btc_send_amount)
+            btc_send_amount, usd_send_amount = self.model.parse_send_amount(str(btc_send_amount), btcusd_spot) 
+        
+        self.view.draw_send_amount(btc_send_amount, usd_send_amount)
         self.model.set_send_amount(btc_send_amount)
         
         default_btc_txfee = self.model.get_txfee()

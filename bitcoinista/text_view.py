@@ -4,7 +4,7 @@ import getpass
 class TextView:
     
     def __init__(self):
-        pass
+        self.btc_sym = u'\u0E3F'
             
     def draw_splash_screen(self, user_mode):
         try:
@@ -31,10 +31,13 @@ class TextView:
         else:
             raise Exception('Unsupported user mode ' + user_mode)   
                
-    def draw_address_and_balance(self, addr, btc_balance):
+    def draw_address_and_balance(self, addr, btc_balance, btcusd_spot):
         print '** Address and Balance **'
         print addr
-        print '{0} BTC'.format(btc_balance)
+        if btcusd_spot <= 0.0:
+            print self.btc_sym + u'{0} ($???)'.format(btc_balance)
+        else:
+            print self.btc_sym + u'{0} (${1:.2f})'.format(btc_balance, btc_balance*btcusd_spot)
         print ' '
 
     def draw_zero_balance(self):
@@ -112,17 +115,20 @@ class TextView:
         return destination_addr
 
     def request_send_amount(self):
-        btc_amount = raw_input('Amount(BTC): ')
+        btc_amount = raw_input('Amount: ')
         return btc_amount
 
     def draw_destination_address(self, dest_addr):
         print 'Destination: ' + dest_addr
         
-    def draw_send_amount(self, btc_amount):        
-        print 'Amount(BTC): ' + str(btc_amount)
+    def draw_send_amount(self, btc_amount, usd_amount):
+        if usd_amount <= 0.0 and btc_amount > 0.0:
+            print u'Amount to send: {0}{1} ($???)'.format(self.btc_sym, btc_amount)
+        else:
+            print u'Amount to send: {0}{1} (${2:.2f})'.format(self.btc_sym, btc_amount, usd_amount)
         
     def request_txfee(self, default_btc_txfee):
-        text = 'Transaction fee (enter for default {0} BTC): '.format(default_btc_txfee)
+        text = u'Transaction fee (enter for default {0}{1}): '.format(self.btc_sym, default_btc_txfee)
         input = raw_input(text)
         if input == '':
             btc_txfee = default_btc_txfee
@@ -134,7 +140,7 @@ class TextView:
     def draw_txfee_warning(self, msg, btc_txfee):
         input = ''
         if msg == 'LARGE':
-            input = raw_input('Your TX fee ({0} BTC) is high. Are you sure? (y to continue, other key to abort)'.format(btc_txfee))
+            input = raw_input(u'Your TX fee ({0}{1}) is high. Are you sure? (y to continue, other key to abort)'.format(self.btc_sym, btc_txfee))
         elif msg == 'ZERO':
             input = raw_input('Zero transaction fee. Are you sure? (y to continue, other key to abort)')     
         else:
