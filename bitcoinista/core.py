@@ -54,7 +54,7 @@ def is_address_valid(addr, on_testnet=False):
     # pubkey or stealth address
     if on_testnet:
         if addr[0] == '2':
-            magic_byte = 192
+            magic_byte = 196
         elif addr[0] == 'm' or addr[0] == 'n':
             magic_byte = 111
         elif addr[0] == 'w':
@@ -107,4 +107,3 @@ def simple_tx_inputs_outputs(from_addr, from_addr_unspent, to_addr, amount_to_se
         tx_outs.append({'value' : changeval, 'address' : from_addr})
 
     return selected_unspent, tx_outs
-
