@@ -27,24 +27,6 @@ class TestWallet(unittest.TestCase):
         # Roundtrip enc -> clear -> enc is not equal since
         # this implementation of AES is non-deterministic
 
-    def test_privkey_from_input(self):
-
-        prv_bw, method = bitcoinista.privkey_from_user_input(self.brainwallet_string)
-        self.assertEqual(prv_bw, self.private_key)
-        self.assertEqual(method, 'brain')
-
-        prv_from_wif, method = bitcoinista.privkey_from_user_input(self.private_key_wif)
-        self.assertEqual(prv_from_wif, self.private_key)
-        self.assertEqual(method, 'wif')
-
-        prv_random, method = bitcoinista.privkey_from_user_input('')
-        prv_random2, method2 = bitcoinista.privkey_from_user_input('')
-        
-        self.assertEqual(bc.get_privkey_format(prv_random), 'hex')
-        self.assertNotEqual(prv_random, prv_random2)
-        self.assertEqual(method, 'random')
-        self.assertEqual(method2, 'random')
-
     def test_wallet_file(self):
         
         filename = 'testing_wallet.json'
