@@ -66,7 +66,9 @@ A video demonstrating sending from a bitcoin URI is here:
 ### Manual transaction ###
 
 If no bitcoin URI is in the clipboard Bitcoinista will ask you to
-enter the address to send to and the amount you wish to send.
+enter the address to send to and the amount you wish to send. If you
+enter a dollar sign before or after your amount, like `$5` or
+`1.25 $`, the amount will be converted using the current exchange rate.
 
 ## Features ##
 

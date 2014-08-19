@@ -1,5 +1,13 @@
 # Release Notes #
 
+## Version 0.3.1 - 2014-08-18 ##
+
+* Add USD exchange rate.
+
+* Fixed erroneous magic byte for testnet P2SH addresses.
+
+* Updated tests.
+
 ## Version 0.3 - 2014-07-23 ##
 
 * Add support for sending to *basic stealth addresses*, i.e. stealth
