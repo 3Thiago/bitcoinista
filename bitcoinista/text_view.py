@@ -35,9 +35,15 @@ class TextView:
         print '** Address and Balance **'
         print addr
         if btcusd_spot <= 0.0:
-            print self.btc_sym + u'{0} ($???)'.format(btc_balance)
+            try:
+                print self.btc_sym + u'{0} ($???)'.format(btc_balance)
+            except:
+                print u'{0} BTC ($???)'.format(btc_balance)                
         else:
-            print self.btc_sym + u'{0} (${1:.2f})'.format(btc_balance, btc_balance*btcusd_spot)
+            try:
+                print self.btc_sym + u'{0} (${1:.2f})'.format(btc_balance, btc_balance*btcusd_spot)
+            except:
+                print u'{0} BTC (${1:.2f})'.format(btc_balance, btc_balance*btcusd_spot)
         print ' '
 
     def draw_zero_balance(self):
@@ -123,13 +129,23 @@ class TextView:
         
     def draw_send_amount(self, btc_amount, usd_amount):
         if usd_amount <= 0.0 and btc_amount > 0.0:
-            print u'Amount to send: {0}{1} ($???)'.format(self.btc_sym, btc_amount)
+            try:
+                print u'Amount to send: ' + self.btc_sym + u'{0} ($???)'.format(btc_amount)
+            except:
+                print u'Amount to send: {0} BTC ($???)'.format(btc_amount)                
         else:
-            print u'Amount to send: {0}{1} (${2:.2f})'.format(self.btc_sym, btc_amount, usd_amount)
-        
+            try:
+                print u'Amount to send: ' + self.btc_sym + u'{0} (${1:.2f})'.format(btc_amount, usd_amount)
+            except:
+                print u'Amount to send: {0} BTC (${1:.2f})'.format(btc_amount, usd_amount)
+                
     def request_txfee(self, default_btc_txfee):
-        text = u'Transaction fee (enter for default {0}{1}): '.format(self.btc_sym, default_btc_txfee)
-        input = raw_input(text)
+        text = u'Transaction fee (enter for default ' + self.btc_sym + u'{0}): '.format(default_btc_txfee)
+        alt_text = u'Transaction fee (enter for default {0} BTC): '.format(default_btc_txfee)
+        try:
+            input = raw_input(text)
+        except:
+            input = raw_input(alt_text)            
         if input == '':
             btc_txfee = default_btc_txfee
         else:
@@ -140,7 +156,10 @@ class TextView:
     def draw_txfee_warning(self, msg, btc_txfee):
         input = ''
         if msg == 'LARGE':
-            input = raw_input(u'Your TX fee ({0}{1}) is high. Are you sure? (y to continue, other key to abort)'.format(self.btc_sym, btc_txfee))
+            try:
+                input = raw_input(u'Your TX fee (' + self.btc_sym + u'{0}) is high. Are you sure? (y to continue, other key to abort)'.format(btc_txfee))
+            except:
+                input = raw_input(u'Your TX fee ({0} BTC) is high. Are you sure? (y to continue, other key to abort)'.format(btc_txfee))   
         elif msg == 'ZERO':
             input = raw_input('Zero transaction fee. Are you sure? (y to continue, other key to abort)')     
         else:
